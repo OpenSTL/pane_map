@@ -20,16 +20,17 @@ class FeaturePopup extends SdkPopup {
     const attributeList = [];
     for(let i=0; i<= keys.length; i++){
       if(feature.properties[keys[i]]){
-        attributeList.push(<li className='label'>{keys[i]} : {feature.properties[keys[i]]}</li>);
+        attributeList.push(<li className='label' key={i}>{keys[i]} : {feature.properties[keys[i]]}</li>);
       }
     }
     return (<ul>{attributeList}</ul>);
   }
   render() {
+    const attributeList = this.buildAttributes(this.props.features[0]);
     return this.renderPopup((
       <div className='popup-content'>
         <div className='attrib-container frame'>
-          {this.buildAttributes(this.props.features[0])}
+          {attributeList}
         </div>
       </div>
     ));
@@ -50,6 +51,8 @@ class App extends Component {
     source: 'osm',
   }));
   this.addLayerFromSensorUp('https://stlouis18-02515.sensorup.com/v1.0/Observations?$expand=FeatureOfInterest', 'Observations');
+
+
   // Copy the following line to add more data changing the url, and name
   // Talk to Willie if you want to change image styles between types
   // this.addLayerFromGeoJSON('https://raw.githubusercontent.com/OpenDataSTL/arch2park/master/Landmarks.geojson', 'landmark');
@@ -102,7 +105,7 @@ addLayerFromSensorUp(url, sourceName) {
               type: 'Point',
               coordinates: location.FeatureOfInterest.feature.coordinates,
             },
-            properties: location.FeatureOfInterest
+            properties: location.parameters
           };
         });
         // add features to geojson obj
@@ -141,19 +144,6 @@ addLayerFromSensorUp(url, sourceName) {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Smart Cities Map
-          </a>
-        </header>
         <SdkMap store={store}
           includeFeaturesOnClick
           onClick={(map, xy, featuresPromise) => {
