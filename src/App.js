@@ -49,6 +49,8 @@ class App extends Component {
     id: 'osm',
     source: 'osm',
   }));
+  // Copy the following line to add more data changing the url, and name
+  // Talk to Willie if you want to change image styles between types
   this.addLayerFromGeoJSON('https://raw.githubusercontent.com/OpenDataSTL/arch2park/master/Landmarks.geojson', 'landmark');
 }
 addLayerFromGeoJSON(url, sourceName) {
