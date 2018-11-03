@@ -39,7 +39,7 @@ class FeaturePopup extends SdkPopup {
 class App extends Component {
   componentDidMount() {
     //set map center
-    store.dispatch(SdkMapActions.setView([-90.2, 38.6], 9));
+    store.dispatch(SdkMapActions.setView([-114, 51], 9));
 
   // add the OSM source
   store.dispatch(SdkMapActions.addOsmSource('osm'));
@@ -49,7 +49,7 @@ class App extends Component {
     id: 'osm',
     source: 'osm',
   }));
-  this.addLayerFromGeoJSON('https://raw.githubusercontent.com/OpenDataSTL/arch2park/master/Landmarks.geojson', 'landmark');
+  this.addLayerFromSensorUp('https://stlouis18-02515.sensorup.com/v1.0/Observations?$expand=FeatureOfInterest', 'Observations');
 }
 addLayerFromGeoJSON(url, sourceName) {
     // Fetch URL
@@ -64,6 +64,53 @@ addLayerFromGeoJSON(url, sourceName) {
         store.dispatch(SdkMapActions.addSource(sourceName, {
           type: 'geojson',
           data: json
+        }));
+        store.dispatch(SdkMapActions.addLayer({
+          id: `${sourceName}-layer`,
+          source: sourceName,
+          type: 'circle',
+          paint: {
+            'circle-radius': 3,
+            'circle-color': '#feb24c',
+            'circle-stroke-color': '#f03b20',
+          },
+
+        }));
+      })
+      .catch((exception) => {
+        console.error('An error occurred.', exception);
+      });
+  };
+addLayerFromSensorUp(url, sourceName) {
+    // Fetch URL
+    fetch(url)
+      .then(
+        response => response.json(),
+        error => console.error('An error occured.', error),
+      )
+      // addFeatures with the features, source name
+      .then((json) => {
+        // Map sensor up data to geojson deature
+        const geoJsonData = json.value.map(function(location) {
+          return {
+            type: 'Feature',
+            geometry: {
+              type: 'Point',
+              coordinates: location.FeatureOfInterest.feature.coordinates,
+            },
+            properties: location.FeatureOfInterest
+          };
+        });
+        // add features to geojson obj
+        const geoJson = {
+          type: "FeatureCollection",
+          crs: { type: "name", properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+          features: geoJsonData
+        };
+        // add geojson obj to map
+        store.dispatch(SdkMapActions.addSource(sourceName, {
+          type: 'geojson',
+          data: geoJson
         }));
         store.dispatch(SdkMapActions.addLayer({
           id: `${sourceName}-layer`,
