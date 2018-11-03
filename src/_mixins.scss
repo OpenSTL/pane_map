@@ -1,0 +1,79 @@
+// REsponsive mixins
+
+@mixin bp($point) {
+  $bp-babybear: '(max-width: 600px)';
+  $bp-mamabear: '(max-width: 1250px)';
+  $bp-papabear: '(max-width: 1600px)';
+  $bp-shortybear: '(max-height: 500px)';
+
+  @if $point == papa-bear {
+    @media #{$bp-papabear} {
+      @content;
+    }
+  } @else if $point == mama-bear {
+    @media #{$bp-mamabear} {
+      @content;
+    }
+  } @else if $point == baby-bear {
+    @media #{$bp-babybear} {
+      @content;
+    }
+  } @else if $point == shorty-bear {
+    @media #{$bp-shortybear} {
+      @content;
+    }
+  }
+}
+
+
+//  Grid mixins
+@mixin flex-grid {
+  display: flex;
+}
+
+@mixin wrap {
+  flex-wrap: wrap;
+}
+
+@mixin col {
+  flex: 1;
+}
+
+@mixin col-2 {
+  flex: 2;
+}
+
+@mixin col-3 {
+  flex: 3;
+}
+@mixin col-4 {
+  flex: 4;
+}
+@mixin col-5 {
+  flex: 5;
+}
+@mixin col-6 {
+  flex: 6;
+}
+@mixin col-7 {
+  flex: 7;
+}
+@mixin col-8 {
+  flex: 8;
+}
+@mixin col-9 {
+  flex: 9;
+}
+
+@mixin flex-grid-block {
+  display: block;
+}
+
+@mixin flex-grid--half {
+  display: flex;
+  justify-content: space-between;
+
+  .col {
+    width: 49%;
+  }
+}

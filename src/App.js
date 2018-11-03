@@ -5,10 +5,36 @@ import { createStore, combineReducers } from 'redux';
 import SdkMap from '@boundlessgeo/sdk/components/map';
 import SdkMapReducer from '@boundlessgeo/sdk/reducers/map';
 import * as SdkMapActions from '@boundlessgeo/sdk/actions/map';
+import SdkPopup from '@boundlessgeo/sdk/components/map/popup';
 
 const store = createStore(combineReducers({
   'map': SdkMapReducer,
 }), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+
+
+/** A popup
+ */
+class FeaturePopup extends SdkPopup {
+  buildAttributes(feature) {
+    const keys = Object.keys(feature.properties);
+    const attributeList = [];
+    for(let i=0; i<= keys.length; i++){
+      if(feature.properties[keys[i]]){
+        attributeList.push(<li className='label'>{keys[i]} : {feature.properties[keys[i]]}</li>);
+      }
+    }
+    return (<ul>{attributeList}</ul>);
+  }
+  render() {
+    return this.renderPopup((
+      <div className='popup-content'>
+        <div className='attrib-container frame'>
+          {this.buildAttributes(this.props.features[0])}
+        </div>
+      </div>
+    ));
+  }
+}
 
 class App extends Component {
   componentDidMount() {
@@ -23,6 +49,8 @@ class App extends Component {
     id: 'osm',
     source: 'osm',
   }));
+  // Copy the following line to add more data changing the url, and name
+  // Talk to Willie if you want to change image styles between types
   this.addLayerFromGeoJSON('https://raw.githubusercontent.com/OpenDataSTL/arch2park/master/Landmarks.geojson', 'landmark');
 }
 addLayerFromGeoJSON(url, sourceName) {
@@ -77,7 +105,36 @@ addLayerFromGeoJSON(url, sourceName) {
             Smart Cities Map
           </a>
         </header>
-        <SdkMap store={store} />
+        <SdkMap store={store}
+          includeFeaturesOnClick
+          onClick={(map, xy, featuresPromise) => {
+            featuresPromise.then((featureGroups) => {
+              // setup an array for all the features returned in the promise.
+              let features = [];
+
+              // featureGroups is an array of objects. The key of each object
+              // is a layer from the map.
+              for (let g = 0, gg = featureGroups.length; g < gg; g++) {
+                // collect every feature from each layer.
+                const layers = Object.keys(featureGroups[g]);
+                for (let l = 0, ll = layers.length; l < ll; l++) {
+                  const layer = layers[l];
+                  features = features.concat(featureGroups[g][layer]);
+                }
+              }
+
+              if (features.length === 0) {
+                // no features, :( Let the user know nothing was there.
+                map.addPopup(<SdkPopup coordinate={xy} closeable><i>No features found.</i></SdkPopup>);
+              } else {
+                // Show the super advanced fun popup!
+                map.addPopup(<FeaturePopup coordinate={xy} features={features} closeable />);
+              }
+            }).catch((exception) => {
+              console.error('An error occurred.', exception);
+            });
+          }}
+        />
       </div>
     );
   }

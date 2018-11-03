@@ -245,11 +245,61 @@ li.sdk-layer {
   font-size: calc(10px + 2vmin);
   color: white; }
 
-.App-link {
-  color: #61dafb; }
+#sdk-popup-container {
+  margin: 0px 0px 6px 6px;
+  overflow: auto !important; }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg); }
-  to {
-    transform: rotate(360deg); } }
+.popup-content {
+  display: flex;
+  flex-direction: column;
+  max-height: 320px; }
+  .popup-content .popup-header {
+    border-bottom: 1px solid #cdcdcd;
+    padding-bottom: 10px;
+    margin-bottom: 8px; }
+    .popup-content .popup-header h4 {
+      margin: 0;
+      padding-bottom: 4px; }
+    .popup-content .popup-header div {
+      color: #757575; }
+  .popup-content .attrib-container {
+    overflow: visible;
+    flex: 1;
+    height: 185px; }
+  .popup-content .frame {
+    overflow-y: auto; }
+  .popup-content .frame::-webkit-scrollbar {
+    -webkit-appearance: none; }
+  .popup-content .frame::-webkit-scrollbar:vertical {
+    width: 11px; }
+  .popup-content .frame::-webkit-scrollbar:horizontal {
+    height: 11px; }
+  .popup-content .frame::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    border: 2px solid white;
+    /* should match background, can't be transparent */
+    background-color: rgba(0, 0, 0, 0.5); }
+  .popup-content ul {
+    list-style: none;
+    padding: 0; }
+    .popup-content ul li {
+      display: flex;
+      min-width: 300px;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #cdcdcd; }
+      @media (max-width: 600px) {
+        .popup-content ul li {
+          width: 200px; }
+          .popup-content ul li .label {
+            width: 100px; } }
+      .popup-content ul li .label {
+        text-transform: capitalize;
+        margin-right: 20px;
+        width: 110px;
+        color: #969696;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis; }
+      .popup-content ul li .value {
+        flex: 1; }
