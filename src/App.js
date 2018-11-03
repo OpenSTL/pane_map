@@ -50,6 +50,10 @@ class App extends Component {
     source: 'osm',
   }));
   this.addLayerFromSensorUp('https://stlouis18-02515.sensorup.com/v1.0/Observations?$expand=FeatureOfInterest', 'Observations');
+  // Copy the following line to add more data changing the url, and name
+  // Talk to Willie if you want to change image styles between types
+  // this.addLayerFromGeoJSON('https://raw.githubusercontent.com/OpenDataSTL/arch2park/master/Landmarks.geojson', 'landmark');
+
 }
 addLayerFromGeoJSON(url, sourceName) {
     // Fetch URL
